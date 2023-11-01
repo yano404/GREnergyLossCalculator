@@ -1,7 +1,7 @@
 GR Energy Loss Calculator
 =========================
 
-## Rrequirements
+## Requirements
 
 - numpy
 - [pycatima](https://github.com/hrosiak/pycatima)
