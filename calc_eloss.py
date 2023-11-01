@@ -191,7 +191,8 @@ def main():
     rest_gagg = rest.results[idx_gagg]
     
     # Print results
-    print("# Proton")
+    print(f"# B={b:.2f}mT Brho={b*rho:.2f}mTm p={k:.2f}MeV/c")
+    print(f"# Proton   T = {Tp:7.3f}MeV")
     print( "| Material |     Ein |    Eout |   Eloss |")
     print( "|:--------:|--------:|--------:|--------:|")
     print(f"|   Pla1   | {resp_pla1.Ein*Ap:7.3f} | {resp_pla1.Eout*Ap:7.3f} | {resp_pla1.Eloss:7.3f} |")
@@ -199,7 +200,7 @@ def main():
     print(f"|   GAGG   | {resp_gagg.Ein*Ap:7.3f} | {resp_gagg.Eout*Ap:7.3f} | {resp_gagg.Eloss:7.3f} |")
     print("")
 
-    print("# Deuteron")
+    print(f"# Deuteron T = {Td:7.3f}MeV")
     print( "| Material |     Ein |    Eout |   Eloss |")
     print( "|:--------:|--------:|--------:|--------:|")
     print(f"|   Pla1   | {resd_pla1.Ein*Ad:7.3f} | {resd_pla1.Eout*Ad:7.3f} | {resd_pla1.Eloss:7.3f} |")
@@ -207,7 +208,7 @@ def main():
     print(f"|   GAGG   | {resd_gagg.Ein*Ad:7.3f} | {resd_gagg.Eout*Ad:7.3f} | {resd_gagg.Eloss:7.3f} |")
     print("")
 
-    print("# Triton")
+    print(f"# Triton   T = {Tt:7.3f}MeV")
     print( "| Material |     Ein |    Eout |   Eloss |")
     print( "|:--------:|--------:|--------:|--------:|")
     print(f"|   Pla1   | {rest_pla1.Ein*At:7.3f} | {rest_pla1.Eout*At:7.3f} | {rest_pla1.Eloss:7.3f} |")
