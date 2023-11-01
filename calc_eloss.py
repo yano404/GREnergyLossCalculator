@@ -13,6 +13,15 @@ um2cm = 1e-4
 mm2cm = 1e-1
 sqrt2 = np.sqrt(2)
 rho = 3.0 # meters
+mp = 1.007_276_467 # u
+md = 2.013_553_213 # u
+mt = 3.015_500_716 # u
+qp = 1.0 # e
+qd = 1.0 # e
+qt = 1.0 # e
+Ap = 1.0
+Ad = 2.0
+At = 3.0
 
 # Layers
 exit_window = atima.Layers()
@@ -118,16 +127,6 @@ air.thickness_cm(294.0*mm2cm)
 mat.add(air)
 mat.add_layers(sci_gagg) # GAGG
 idx_gagg = mat.num() - 1 # Index for pla1
-
-mp = 1.007_276_467 # u
-md = 2.013_553_213 # u
-mt = 3.015_500_716 # u
-qp = 1.0 # e
-qd = 1.0 # e
-qt = 1.0 # e
-Ap = 1.0
-Ad = 2.0
-At = 3.0
 
 
 def Brho2p(Brho):
