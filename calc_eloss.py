@@ -99,8 +99,9 @@ sci_pla2.add(black_sheet)
 sci_pla2.add(pla)
 sci_pla2.add(black_sheet)
 # GAGG
-black_sheet.thickness_cm(200.0*um2cm)
+black_sheet.thickness_cm(100.0*um2cm)
 gagg.thickness_cm(35.0*mm2cm)
+sci_gagg.add(black_sheet)
 sci_gagg.add(black_sheet)
 sci_gagg.add(gagg)
 
