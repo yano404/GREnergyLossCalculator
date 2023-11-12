@@ -1,0 +1,13 @@
+# python
+__pycache__
+dist
+# pyenv
+.python-version
+# Environments
+.venv
+# visual-studio-code
+.vscode
+# mac
+.DS_Store
+# vim
+*~
