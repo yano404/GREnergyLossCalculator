@@ -7,6 +7,7 @@ GR Energy Loss Calculator
 import argparse
 import numpy as np
 import pycatima as atima
+from run2b import run2b
 
 # Constants
 um2cm = 1e-4
@@ -150,17 +151,7 @@ def p2T(p, mu):
     return T
 
 
-def main():
-    # Parser
-    parser = argparse.ArgumentParser(
-            description='Energy loss calculator for GR')
-    parser.add_argument(
-            'b',
-            type=float,
-            help='Magnetic field strength(mT)')
-    args = parser.parse_args()
-    # Rigidity
-    b = args.b
+def calc_eloss(b):
     # Momentum
     k = Brho2p(b*rho)
     kp = k * qp
@@ -218,5 +209,26 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # Parser
+    parser = argparse.ArgumentParser(
+            description='Energy loss calculator for GR')
+    mutual= parser.add_mutually_exclusive_group(required=True)
+    mutual.add_argument(
+            '-b', '--mag',
+            type=float,
+            help='Magnetic field strength(mT)')
+    mutual.add_argument(
+            '-n', '--run',
+            type=int,
+            help='Run number')
+    args = parser.parse_args()
+    # Rigidity
+    b = args.mag
+    # Run number
+    run = args.run
+    if b:
+        calc_eloss(b)
+    elif run:
+        print(f'# Run {run}')
+        calc_eloss(run2b(run))
 
