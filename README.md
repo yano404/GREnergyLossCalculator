@@ -9,6 +9,14 @@ GR Energy Loss Calculator
 ## Usage
 
 ```
-./calc_eloss.py <rigidity(mT)>
+./calc_eloss.py -b <magnetic field(mT)>
+./calc_eloss.py --mag <magnetic field(mT)>
+```
+
+or
+
+```
+./calc_eloss.py -n <run number>
+./calc_eloss.py --run <run number>
 ```
 
