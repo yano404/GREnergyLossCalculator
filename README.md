@@ -4,6 +4,7 @@ GR Energy Loss Calculator
 ## Requirements
 
 - numpy
+- pandas
 - [pycatima](https://github.com/hrosiak/pycatima)
 
 ## Usage
