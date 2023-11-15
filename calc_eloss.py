@@ -181,32 +181,52 @@ def calc_eloss(b):
     resp_gagg = resp.results[idx_gagg]
     resd_gagg = resd.results[idx_gagg]
     rest_gagg = rest.results[idx_gagg]
-    
+
+    resp_sigma_E_sq = np.zeros(mat.num())
+    resd_sigma_E_sq = np.zeros(mat.num())
+    rest_sigma_E_sq = np.zeros(mat.num())
+
+    for i in range(mat.num()):
+        resp_sigma_E_sq[i] = np.power(resp.results[i].sigma_E, 2)
+        resd_sigma_E_sq[i] = np.power(resd.results[i].sigma_E, 2)
+        rest_sigma_E_sq[i] = np.power(rest.results[i].sigma_E, 2)
+
+    resp_pla1_sigma_E = Ap * np.sqrt(np.sum(resp_sigma_E_sq[:idx_pla1+1]))
+    resd_pla1_sigma_E = Ad * np.sqrt(np.sum(resd_sigma_E_sq[:idx_pla1+1]))
+    rest_pla1_sigma_E = At * np.sqrt(np.sum(rest_sigma_E_sq[:idx_pla1+1]))
+
+    resp_pla2_sigma_E = Ap * np.sqrt(np.sum(resp_sigma_E_sq[:idx_pla2+1]))
+    resd_pla2_sigma_E = Ad * np.sqrt(np.sum(resd_sigma_E_sq[:idx_pla2+1]))
+    rest_pla2_sigma_E = At * np.sqrt(np.sum(rest_sigma_E_sq[:idx_pla2+1]))
+
+    resp_gagg_sigma_E = Ap * np.sqrt(np.sum(resp_sigma_E_sq[:idx_gagg+1]))
+    resd_gagg_sigma_E = Ad * np.sqrt(np.sum(resd_sigma_E_sq[:idx_gagg+1]))
+    rest_gagg_sigma_E = At * np.sqrt(np.sum(rest_sigma_E_sq[:idx_gagg+1]))
+
     # Print results
     print(f"# B={b:.2f}mT Brho={b*rho:.2f}mTm p={k:.2f}MeV/c")
     print(f"# Proton   T = {Tp:7.3f}MeV")
-    print( "| Material |     Ein |    Eout |   Eloss |")
-    print( "|:--------:|--------:|--------:|--------:|")
-    print(f"|   Pla1   | {resp_pla1.Ein*Ap:7.3f} | {resp_pla1.Eout*Ap:7.3f} | {resp_pla1.Eloss:7.3f} |")
-    print(f"|   Pla2   | {resp_pla2.Ein*Ap:7.3f} | {resp_pla2.Eout*Ap:7.3f} | {resp_pla2.Eloss:7.3f} |")
-    print(f"|   GAGG   | {resp_gagg.Ein*Ap:7.3f} | {resp_gagg.Eout*Ap:7.3f} | {resp_gagg.Eloss:7.3f} |")
+    print( "| Material |     Ein |    Eout |   Eloss |  sigmaE |")
+    print( "|:--------:|--------:|--------:|--------:|--------:|")
+    print(f"|   Pla1   | {resp_pla1.Ein*Ap:7.3f} | {resp_pla1.Eout*Ap:7.3f} | {resp_pla1.Eloss:7.3f} | {resp_pla1_sigma_E:7.3f} |")
+    print(f"|   Pla2   | {resp_pla2.Ein*Ap:7.3f} | {resp_pla2.Eout*Ap:7.3f} | {resp_pla2.Eloss:7.3f} | {resp_pla2_sigma_E:7.3f} |")
+    print(f"|   GAGG   | {resp_gagg.Ein*Ap:7.3f} | {resp_gagg.Eout*Ap:7.3f} | {resp_gagg.Eloss:7.3f} | {resp_gagg_sigma_E:7.3f} |")
     print("")
 
     print(f"# Deuteron T = {Td:7.3f}MeV")
-    print( "| Material |     Ein |    Eout |   Eloss |")
-    print( "|:--------:|--------:|--------:|--------:|")
-    print(f"|   Pla1   | {resd_pla1.Ein*Ad:7.3f} | {resd_pla1.Eout*Ad:7.3f} | {resd_pla1.Eloss:7.3f} |")
-    print(f"|   Pla2   | {resd_pla2.Ein*Ad:7.3f} | {resd_pla2.Eout*Ad:7.3f} | {resd_pla2.Eloss:7.3f} |")
-    print(f"|   GAGG   | {resd_gagg.Ein*Ad:7.3f} | {resd_gagg.Eout*Ad:7.3f} | {resd_gagg.Eloss:7.3f} |")
+    print( "| Material |     Ein |    Eout |   Eloss |  sigmaE |")
+    print( "|:--------:|--------:|--------:|--------:|--------:|")
+    print(f"|   Pla1   | {resd_pla1.Ein*Ad:7.3f} | {resd_pla1.Eout*Ad:7.3f} | {resd_pla1.Eloss:7.3f} | {resd_pla1_sigma_E:7.3f} |")
+    print(f"|   Pla2   | {resd_pla2.Ein*Ad:7.3f} | {resd_pla2.Eout*Ad:7.3f} | {resd_pla2.Eloss:7.3f} | {resd_pla2_sigma_E:7.3f} |")
+    print(f"|   GAGG   | {resd_gagg.Ein*Ad:7.3f} | {resd_gagg.Eout*Ad:7.3f} | {resd_gagg.Eloss:7.3f} | {resd_gagg_sigma_E:7.3f} |")
     print("")
 
     print(f"# Triton   T = {Tt:7.3f}MeV")
-    print( "| Material |     Ein |    Eout |   Eloss |")
-    print( "|:--------:|--------:|--------:|--------:|")
-    print(f"|   Pla1   | {rest_pla1.Ein*At:7.3f} | {rest_pla1.Eout*At:7.3f} | {rest_pla1.Eloss:7.3f} |")
-    print(f"|   Pla2   | {rest_pla2.Ein*At:7.3f} | {rest_pla2.Eout*At:7.3f} | {rest_pla2.Eloss:7.3f} |")
-    print(f"|   GAGG   | {rest_gagg.Ein*At:7.3f} | {rest_gagg.Eout*At:7.3f} | {rest_gagg.Eloss:7.3f} |")
-
+    print( "| Material |     Ein |    Eout |   Eloss |  sigmaE |")
+    print( "|:--------:|--------:|--------:|--------:|--------:|")
+    print(f"|   Pla1   | {rest_pla1.Ein*At:7.3f} | {rest_pla1.Eout*At:7.3f} | {rest_pla1.Eloss:7.3f} | {rest_pla1_sigma_E:7.3f} |")
+    print(f"|   Pla2   | {rest_pla2.Ein*At:7.3f} | {rest_pla2.Eout*At:7.3f} | {rest_pla2.Eloss:7.3f} | {rest_pla2_sigma_E:7.3f} |")
+    print(f"|   GAGG   | {rest_gagg.Ein*At:7.3f} | {rest_gagg.Eout*At:7.3f} | {rest_gagg.Eloss:7.3f} | {rest_gagg_sigma_E:7.3f} |")
 
 if __name__ == '__main__':
     # Parser
