@@ -140,6 +140,15 @@ def Brho2p(Brho):
     return p
 
 
+def p2Brho(p):
+    # Momentum to B (q=1)
+    # Momentum in MeV/c
+    # q in e units
+    # return in mT
+    Brho = p / 0.299792458
+    return Brho
+
+
 def p2T(p, mu):
     # Momentum to Kinetic Energy
     # p in MeV/c
@@ -151,9 +160,13 @@ def p2T(p, mu):
     return T
 
 
-def calc_eloss(b):
+def calc_eloss(b, scale=0.0):
+    """
+    Calculate energy loss in the materials
+    """
     # Momentum
-    k = Brho2p(b*rho)
+    korg = Brho2p(b*rho)
+    k = korg * (100.0 + scale) / 100.0
     kp = k * qp
     kd = k * qd
     kt = k * qt
@@ -204,7 +217,8 @@ def calc_eloss(b):
     rest_gagg_sigma_E = At * np.sqrt(np.sum(rest_sigma_E_sq[:idx_gagg+1]))
 
     # Print results
-    print(f"# B={b:.2f}mT Brho={b*rho:.2f}mTm p={k:.2f}MeV/c")
+    print(f"# B={b:.2f}mT Brho={b*rho:.2f}mTm p={korg:.2f}MeV/c")
+    print(f"# p={k:.2f}MeV/c ({100.0+scale:.2f}%)")
     print(f"# Proton   T = {Tp:7.3f}MeV")
     print( "| Material |     Ein |    Eout |   Eloss |  sigmaE |")
     print( "|:--------:|--------:|--------:|--------:|--------:|")
@@ -238,17 +252,33 @@ if __name__ == '__main__':
             type=float,
             help='Magnetic field strength(mT)')
     mutual.add_argument(
+            '-p', '--momentum',
+            type=float,
+            help='Momentum(MeV/c)')
+    mutual.add_argument(
             '-n', '--run',
             type=int,
             help='Run number')
+    parser.add_argument(
+            '-s', '--scale',
+            default=0.0,
+            type=float,
+            help='Scaling factor (in +-2.5 percents)')
     args = parser.parse_args()
     # Rigidity
     b = args.mag
+    # Momentum
+    p = args.momentum
     # Run number
     run = args.run
+    # Scaling factor
+    scale = args.scale
+
     if b:
-        calc_eloss(b)
+        calc_eloss(b, scale)
+    elif p:
+        calc_eloss(p2Brho(p)/rho, scale)
     elif run:
         print(f'# Run {run}')
-        calc_eloss(run2b(run))
+        calc_eloss(run2b(run), scale)
 
