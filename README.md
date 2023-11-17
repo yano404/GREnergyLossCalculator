@@ -21,6 +21,13 @@ or
 ./calc_eloss.py --run <run number>
 ```
 
+or
+
+```
+./calc_eloss.py -p <momentum(MeV/c)>
+./calc_eloss.py --momentum <momentum(MeV/c)>
+```
+
 Example:
 
 ```
