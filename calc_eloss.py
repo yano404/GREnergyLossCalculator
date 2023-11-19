@@ -6,6 +6,7 @@ GR Energy Loss Calculator
 
 import argparse
 import numpy as np
+import yaml
 import pycatima as atima
 from run2b import run2b
 
@@ -254,6 +255,12 @@ def calc_eloss(b, scale=0.0):
     print(f"|   GAGG   | {rest_gagg.Ein*At:7.3f} | {rest_gagg.Eout*At:7.3f} | {rest_gagg.Eloss:7.3f} | {rest_gagg_sigma_E:7.3f} |")
 
 if __name__ == '__main__':
+    # Load config
+    with open('config.yaml') as fp:
+        conf = yaml.safe_load(fp)
+        run2b_file = conf['run2b_file']
+        default_scale = conf['default_scale']
+
     # Parser
     parser = argparse.ArgumentParser(
             description='Energy loss calculator for GR')
@@ -272,7 +279,7 @@ if __name__ == '__main__':
             help='Run number')
     parser.add_argument(
             '-s', '--scale',
-            default="0.0",
+            default=default_scale,
             type=str,
             help='Scaling factor (in +-2.5 percents)')
     args = parser.parse_args()
@@ -292,5 +299,5 @@ if __name__ == '__main__':
         calc_eloss(p2Brho(p)/rho, scale)
     elif run:
         print(f'# Run {run}')
-        calc_eloss(run2b(run), scale)
+        calc_eloss(run2b(run, run2b_file), scale)
 
