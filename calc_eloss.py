@@ -13,6 +13,8 @@ from run2b import run2b
 um2cm = 1e-4
 mm2cm = 1e-1
 sqrt2 = np.sqrt(2)
+amu = 931.49410242 # MeV/c^2
+c = 299792458.0 # m/sec
 rho = 3.0 # meters
 mp = 1.007_276_467 # u
 md = 2.013_553_213 # u
@@ -136,7 +138,7 @@ def Brho2p(Brho):
     # Brho in mT*m units
     # q in e units
     # return in MeV/c
-    p = 0.299792458 * Brho
+    p = c * 1e-9 * Brho
     return p
 
 
@@ -145,7 +147,7 @@ def p2Brho(p):
     # Momentum in MeV/c
     # q in e units
     # return in mT
-    Brho = p / 0.299792458
+    Brho = p / (c * 1e-9)
     return Brho
 
 
@@ -153,11 +155,20 @@ def p2T(p, mu):
     # Momentum to Kinetic Energy
     # p in MeV/c
     # mu in amu
-    amu = 931.49410242 # MeV/c^2
     m = mu*amu # MeV/c^2
-    E = np.sqrt(np.power(p,2)+np.power(m,2))
+    E = np.sqrt(np.square(p) + np.square(m))
     T = E - m
     return T
+
+
+def T2p(T, mu):
+    # Kinetic Energy to Momentum
+    # T in MeV
+    # mu in amu
+    m = mu*amu # MeV/c^2
+    E = T + m
+    p = np.sqrt(np.square(E) - np.square(m))
+    return p
 
 
 def calc_eloss(b, scale=0.0):
@@ -249,11 +260,11 @@ if __name__ == '__main__':
     mutual= parser.add_mutually_exclusive_group(required=True)
     mutual.add_argument(
             '-b', '--mag',
-            type=float,
+            type=str,
             help='Magnetic field strength(mT)')
     mutual.add_argument(
             '-p', '--momentum',
-            type=float,
+            type=str,
             help='Momentum(MeV/c)')
     mutual.add_argument(
             '-n', '--run',
@@ -261,8 +272,8 @@ if __name__ == '__main__':
             help='Run number')
     parser.add_argument(
             '-s', '--scale',
-            default=0.0,
-            type=float,
+            default="0.0",
+            type=str,
             help='Scaling factor (in +-2.5 percents)')
     args = parser.parse_args()
     # Rigidity
@@ -272,11 +283,12 @@ if __name__ == '__main__':
     # Run number
     run = args.run
     # Scaling factor
-    scale = args.scale
+    scale = eval(args.scale)
 
     if b:
-        calc_eloss(b, scale)
+        calc_eloss(eval(b), scale)
     elif p:
+        p = eval(p)
         calc_eloss(p2Brho(p)/rho, scale)
     elif run:
         print(f'# Run {run}')
