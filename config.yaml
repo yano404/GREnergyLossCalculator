@@ -1,3 +1,4 @@
 run2b_file: b.dat
 default_scale: -240.4138*sqrt2/600.0*2.5
+default_angle: 0.0
 

@@ -34,7 +34,8 @@ idx_gagg = 0
 def construct_layers(a):
     global idx_pla1, idx_pla2, idx_gagg
     # a in mrad
-    theta = np.deg2rad(45.0) - a*1e-3
+    a = a*1e-3
+    theta = np.deg2rad(45.0) - a
     costheta = np.cos(theta)
 
     # Layers
@@ -110,8 +111,8 @@ def construct_layers(a):
     sci_pla2.add(pla)
     sci_pla2.add(black_sheet)
     # GAGG
-    black_sheet.thickness_cm(100.0*um2cm)
-    gagg.thickness_cm(35.0*mm2cm)
+    black_sheet.thickness_cm(100.0*um2cm/np.cos(a))
+    gagg.thickness_cm(35.0*mm2cm/np.cos(a))
     sci_gagg.add(black_sheet)
     sci_gagg.add(black_sheet)
     sci_gagg.add(gagg)
@@ -135,7 +136,7 @@ def construct_layers(a):
     mat.add(air)
     mat.add_layers(sci_pla2) # Pla2 (10mmt)
     idx_pla2 = mat.num() - 2 # Index for pla1
-    air.thickness_cm(294.0*mm2cm)
+    air.thickness_cm(294.0*mm2cm/np.cos(a))
     mat.add(air)
     mat.add_layers(sci_gagg) # GAGG
     idx_gagg = mat.num() - 1 # Index for pla1
@@ -271,7 +272,8 @@ if __name__ == '__main__':
     with open('config.yaml') as fp:
         conf = yaml.safe_load(fp)
         run2b_file = conf['run2b_file']
-        default_scale = conf['default_scale']
+        default_scale = str(conf['default_scale'])
+        default_angle = str(conf['default_angle'])
 
     # Parser
     parser = argparse.ArgumentParser(
@@ -296,7 +298,7 @@ if __name__ == '__main__':
             help='Scaling factor (in +-2.5 percents)')
     parser.add_argument(
             '-a', '--angle',
-            default="0.0",
+            default=default_angle,
             type=str,
             help='a (mrad)')
     args = parser.parse_args()
