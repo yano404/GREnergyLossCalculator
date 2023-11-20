@@ -27,111 +27,119 @@ Ap = 1.0
 Ad = 2.0
 At = 3.0
 
-# Layers
-exit_window = atima.Layers()
-vdc = atima.Layers()
-sci_pla1 = atima.Layers()
-al_plate = atima.Layers()
-sci_pla2 = atima.Layers()
-sci_gagg = atima.Layers()
-mat = atima.Layers()
 idx_pla1 = 0
 idx_pla2 = 0
 idx_gagg = 0
 
-# Materials
-kapton = atima.get_material(atima.material.Kapton)
-air = atima.get_material(atima.material.Air)
-vdc_film = atima.get_material(atima.material.Kapton)
-vdc_cathode = atima.get_material(atima.material.Kapton)
-# Ar/Iso-Buthane = 9/1
-vdc_gas = atima.Material(
-        [[0,1,30],
-         [0,6,12],
-         [0,18,7]],
-        density=0.001865 #g/cm^3
-        )
-black_sheet = atima.get_material(atima.material.CH2)
-pla = atima.get_material(atima.material.BC_400)
-al = atima.Material([[0,13,1]], density=2.7)
-gagg = atima.Material(
-        [[0,64,3],
-         [0,13,2],
-         [0,31,3],
-         [0,8,12],
-         [0,58,1]],
-        density=6.63 #g/cm^3
-        )
+def construct_layers(a):
+    global idx_pla1, idx_pla2, idx_gagg
+    # a in mrad
+    theta = np.deg2rad(45.0) - a*1e-3
+    costheta = np.cos(theta)
 
-# Construct Layers
+    # Layers
+    exit_window = atima.Layers()
+    vdc = atima.Layers()
+    sci_pla1 = atima.Layers()
+    al_plate = atima.Layers()
+    sci_pla2 = atima.Layers()
+    sci_gagg = atima.Layers()
+    mat = atima.Layers()
 
-# GR exit window
-# Kapton 50um
-kapton.thickness_cm(50.0*um2cm*sqrt2)
-exit_window.add(kapton)
+    # Materials
+    kapton = atima.get_material(atima.material.Kapton)
+    air = atima.get_material(atima.material.Air)
+    vdc_film = atima.get_material(atima.material.Kapton)
+    vdc_cathode = atima.get_material(atima.material.Kapton)
+    # Ar/Iso-Buthane = 9/1
+    vdc_gas = atima.Material(
+            [[0,1,30],
+             [0,6,12],
+             [0,18,7]],
+            density=0.001865 #g/cm^3
+            )
+    black_sheet = atima.get_material(atima.material.CH2)
+    pla = atima.get_material(atima.material.BC_400)
+    al = atima.Material([[0,13,1]], density=2.7)
+    gagg = atima.Material(
+            [[0,64,3],
+             [0,13,2],
+             [0,31,3],
+             [0,8,12],
+             [0,58,1]],
+            density=6.63 #g/cm^3
+            )
 
-# VDC
-vdc_film.thickness_cm(25.0*um2cm*sqrt2)
-vdc_cathode.thickness_cm(6.0*um2cm*sqrt2)
-vdc_gas.thickness_cm(10.0*mm2cm*sqrt2)
-vdc.add(vdc_film) # Entrance window film
-vdc.add(vdc_gas)
-vdc.add(vdc_cathode) # 1st cathode film
-vdc.add(vdc_gas) # Gas
-# x anode wire
-vdc.add(vdc_gas)
-vdc.add(vdc_cathode) # 2nd cathode film
-vdc.add(vdc_gas)
-# u anode film
-vdc.add(vdc_gas)
-vdc.add(vdc_cathode) # 3rd cathode film
-vdc.add(vdc_gas)
-vdc.add(vdc_film) # Exit window film
+    # Construct Layers
 
-# Plastic1 3mmt
-black_sheet.thickness_cm(100.0*um2cm*sqrt2)
-pla.thickness_cm(3.0*mm2cm*sqrt2)
-sci_pla1.add(black_sheet)
-sci_pla1.add(pla)
-sci_pla1.add(black_sheet)
-# Al Plate 1mmt
-al.thickness_cm(1.0*mm2cm*sqrt2)
-al_plate.add(al)
-# Plastic2 10mmt
-pla.thickness_cm(10.0*mm2cm*sqrt2)
-sci_pla2.add(black_sheet)
-sci_pla2.add(pla)
-sci_pla2.add(black_sheet)
-# GAGG
-black_sheet.thickness_cm(100.0*um2cm)
-gagg.thickness_cm(35.0*mm2cm)
-sci_gagg.add(black_sheet)
-sci_gagg.add(black_sheet)
-sci_gagg.add(gagg)
+    # GR exit window
+    # Kapton 50um
+    kapton.thickness_cm(50.0*um2cm/costheta)
+    exit_window.add(kapton)
 
-# Construct layers
-mat.add_layers(exit_window) # GR exit window
-air.thickness_cm((10.0+12.0)*mm2cm*sqrt2) # VDC window frame 12mmt
-mat.add(air)
-mat.add_layers(vdc) # VDC1
-air.thickness_cm((166.0+12.0+12.0)*mm2cm*sqrt2) # VDC window frame 12mmt
-mat.add(air)
-mat.add_layers(vdc) # VDC2
-air.thickness_cm((12.0+107.25)*mm2cm*sqrt2) # VDC window frame 12mmt
-mat.add(air)
-mat.add_layers(sci_pla1) # Pla1 (3mmt)
-idx_pla1 = mat.num() - 2 # Index for pla1
-air.thickness_cm(35.25*mm2cm*sqrt2)
-mat.add(air)
-mat.add_layers(al_plate) # Al plate 1mmt
-air.thickness_cm(45.25*mm2cm*sqrt2)
-mat.add(air)
-mat.add_layers(sci_pla2) # Pla2 (10mmt)
-idx_pla2 = mat.num() - 2 # Index for pla1
-air.thickness_cm(294.0*mm2cm)
-mat.add(air)
-mat.add_layers(sci_gagg) # GAGG
-idx_gagg = mat.num() - 1 # Index for pla1
+    # VDC
+    vdc_film.thickness_cm(25.0*um2cm/costheta)
+    vdc_cathode.thickness_cm(6.0*um2cm/costheta)
+    vdc_gas.thickness_cm(10.0*mm2cm/costheta)
+    vdc.add(vdc_film) # Entrance window film
+    vdc.add(vdc_gas)
+    vdc.add(vdc_cathode) # 1st cathode film
+    vdc.add(vdc_gas) # Gas
+    # x anode wire
+    vdc.add(vdc_gas)
+    vdc.add(vdc_cathode) # 2nd cathode film
+    vdc.add(vdc_gas)
+    # u anode film
+    vdc.add(vdc_gas)
+    vdc.add(vdc_cathode) # 3rd cathode film
+    vdc.add(vdc_gas)
+    vdc.add(vdc_film) # Exit window film
+
+    # Plastic1 3mmt
+    black_sheet.thickness_cm(100.0*um2cm/costheta)
+    pla.thickness_cm(3.0*mm2cm/costheta)
+    sci_pla1.add(black_sheet)
+    sci_pla1.add(pla)
+    sci_pla1.add(black_sheet)
+    # Al Plate 1mmt
+    al.thickness_cm(1.0*mm2cm/costheta)
+    al_plate.add(al)
+    # Plastic2 10mmt
+    pla.thickness_cm(10.0*mm2cm/costheta)
+    sci_pla2.add(black_sheet)
+    sci_pla2.add(pla)
+    sci_pla2.add(black_sheet)
+    # GAGG
+    black_sheet.thickness_cm(100.0*um2cm)
+    gagg.thickness_cm(35.0*mm2cm)
+    sci_gagg.add(black_sheet)
+    sci_gagg.add(black_sheet)
+    sci_gagg.add(gagg)
+
+    # Construct layers
+    mat.add_layers(exit_window) # GR exit window
+    air.thickness_cm((10.0+12.0)*mm2cm/costheta) # VDC window frame 12mmt
+    mat.add(air)
+    mat.add_layers(vdc) # VDC1
+    air.thickness_cm((166.0+12.0+12.0)*mm2cm/costheta) # VDC window frame 12mmt
+    mat.add(air)
+    mat.add_layers(vdc) # VDC2
+    air.thickness_cm((12.0+107.25)*mm2cm/costheta) # VDC window frame 12mmt
+    mat.add(air)
+    mat.add_layers(sci_pla1) # Pla1 (3mmt)
+    idx_pla1 = mat.num() - 2 # Index for pla1
+    air.thickness_cm(35.25*mm2cm/costheta)
+    mat.add(air)
+    mat.add_layers(al_plate) # Al plate 1mmt
+    air.thickness_cm(45.25*mm2cm/costheta)
+    mat.add(air)
+    mat.add_layers(sci_pla2) # Pla2 (10mmt)
+    idx_pla2 = mat.num() - 2 # Index for pla1
+    air.thickness_cm(294.0*mm2cm)
+    mat.add(air)
+    mat.add_layers(sci_gagg) # GAGG
+    idx_gagg = mat.num() - 1 # Index for pla1
+    return mat
 
 
 def Brho2p(Brho):
@@ -172,7 +180,7 @@ def T2p(T, mu):
     return p
 
 
-def calc_eloss(b, scale=0.0):
+def calc_eloss(b, scale=0.0, a=0.0):
     """
     Calculate energy loss in the materials
     """
@@ -191,6 +199,9 @@ def calc_eloss(b, scale=0.0):
     p = atima.Projectile(mp, qp, qp, Tp/Ap)
     d = atima.Projectile(md, qd, qd, Td/Ad)
     t = atima.Projectile(mt, qt, qt, Tt/At)
+
+    # Materials
+    mat = construct_layers(a)
 
     # Calculate energy loss
     resp = atima.calculate_layers(p, mat)
@@ -231,6 +242,7 @@ def calc_eloss(b, scale=0.0):
     # Print results
     print(f"# B={b:.2f}mT Brho={b*rho:.2f}mTm p={korg:.2f}MeV/c")
     print(f"# p={k:.2f}MeV/c ({100.0+scale:.2f}%)")
+    print(f"# a={a:.3f}mrad")
     print(f"# Proton   T = {Tp:7.3f}MeV")
     print( "| Material |     Ein |    Eout |   Eloss |  sigmaE |")
     print( "|:--------:|--------:|--------:|--------:|--------:|")
@@ -282,6 +294,11 @@ if __name__ == '__main__':
             default=default_scale,
             type=str,
             help='Scaling factor (in +-2.5 percents)')
+    parser.add_argument(
+            '-a', '--angle',
+            default="0.0",
+            type=str,
+            help='a (mrad)')
     args = parser.parse_args()
     # Rigidity
     b = args.mag
@@ -291,13 +308,15 @@ if __name__ == '__main__':
     run = args.run
     # Scaling factor
     scale = eval(args.scale)
+    # a
+    a = eval(args.angle)
 
     if b:
-        calc_eloss(eval(b), scale)
+        calc_eloss(eval(b), scale, a)
     elif p:
         p = eval(p)
-        calc_eloss(p2Brho(p)/rho, scale)
+        calc_eloss(p2Brho(p)/rho, scale, a)
     elif run:
         print(f'# Run {run}')
-        calc_eloss(run2b(run, run2b_file), scale)
+        calc_eloss(run2b(run, run2b_file), scale, a)
 
